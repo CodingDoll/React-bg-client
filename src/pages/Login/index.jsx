@@ -1,8 +1,12 @@
 import React, { Component } from "react";
 import "./index.less";
-import logo from "./images/logo.png";
-import { Form, Input, Button } from "antd";
+import logo from "../../assets/logo.png";
+import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { reqLogin } from "../../api";
+import memoryUtils from "../../utils/memoryUtils";
+import storageUtils from "../../utils/storageUtils";
+import { Redirect } from "react-router-dom";
 
 /**
  * 登录页的路由组件
@@ -11,13 +15,22 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 export default class Login extends Component {
   formRef = React.createRef();
 
-  onFinish = (values) => {
-    console.log("Received values of form: ", values);
+  onFinish = async ({ username, password }) => {
+    // const { username, password } = values;
+    const response = await reqLogin(username, password); //{status: 0, data: user} {status: 1, msg:'xxx'}
+    if (response.status === 0) {
+      const user = response.data;
+      memoryUtils.user = user;
+      storageUtils.saveUser(user);
+      message.success("登录成功");
+      this.props.history.replace("/");
+    } else {
+      message.error(response.msg);
+    }
   };
 
   validatePwd = (_, value) => {
     // callback回调有参数即失败带回的信息
-    console.log(value);
     if (!value) {
       return Promise.reject("密码必须输入");
     } else if (value.length < 4) {
@@ -31,6 +44,11 @@ export default class Login extends Component {
   };
 
   render() {
+    const user = memoryUtils.user;
+
+    if (user && user._id) {
+      return <Redirect to="/" />;
+    }
     return (
       <div className="login">
         <header className="login-header">
