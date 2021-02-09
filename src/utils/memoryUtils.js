@@ -1,3 +1,5 @@
-export default {
+const memoryUtils = {
   user: {},
 };
+
+export default memoryUtils;

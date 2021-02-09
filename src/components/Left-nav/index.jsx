@@ -51,9 +51,7 @@ class LeftNav extends Component {
     }, []);
   };
 
-  componentWillMount() {
-    this.menuNodes = this.getMenuNodes(menuList);
-  }
+  menuNodes = this.getMenuNodes(menuList);
 
   render() {
     const path = this.props.history.location.pathname;
