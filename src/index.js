@@ -5,9 +5,4 @@ import memoryUtils from "./utils/memoryUtils";
 import storageUtils from "./utils/storageUtils";
 
 memoryUtils.user = storageUtils.getUser();
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById("root")
-);
+ReactDOM.render(<App />, document.getElementById("root"));

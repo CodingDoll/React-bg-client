@@ -8,9 +8,9 @@ import { message } from "antd";
 import axios from "axios";
 
 export default function ajax(request) {
-  const { url, data, method } = request;
+  const { url, data, method, params } = request;
   return new Promise((resolve, reject) => {
-    let promise = axios({ url, data, method });
+    let promise = axios({ url, data, method, params });
     promise
       .then((response) => resolve(response.data))
       .catch((error) => message.error("请求出错" + error.message));

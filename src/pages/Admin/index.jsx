@@ -27,13 +27,26 @@ export default class Admin extends Component {
       return <Redirect to="/login" />;
     }
     return (
-      <Layout style={{ height: "100%" }}>
-        <Sider>
+      <Layout>
+        <Sider
+          style={{
+            overflow: "auto",
+            height: "100vh",
+            position: "fixed",
+            left: 0,
+          }}
+        >
           <LeftNav />
         </Sider>
-        <Layout>
+        <Layout style={{ marginLeft: 200 }}>
           <Header />
-          <Content style={{ background: "white", margin: "20px 20px" }}>
+          <Content
+            style={{
+              background: "white",
+              margin: "20px 20px",
+              overflow: "initial",
+            }}
+          >
             <Switch>
               <Route path="/home" component={Home} />
               <Route path="/product" component={Product} />
