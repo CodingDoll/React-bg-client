@@ -61,6 +61,27 @@ export const reqUpdateStatus = (productId, status) =>
     data: { productId, status },
   });
 
+export const reqDeleteImg = (name) =>
+  ajax({
+    method: "post",
+    url: "/manage/img/delete",
+    data: { name },
+  });
+
+export const reqAddProduct = (values) =>
+  ajax({
+    method: "post",
+    url: "/manage/product/add",
+    data: values,
+  });
+
+export const reqUpdateProduct = (values) =>
+  ajax({
+    method: "post",
+    url: "/manage/product/update",
+    data: values,
+  });
+
 export const reqWeather = () => {
   return new Promise((resolve, reject) => {
     const url = `https://restapi.amap.com/v3/weather/weatherInfo?key=59edcc69f80df45c19cc3991296a9a47&city=440112`;
