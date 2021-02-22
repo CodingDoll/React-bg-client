@@ -5,6 +5,7 @@ import { reqAddRole, reqRoles, reqUpdateRole } from "../../api/index";
 import { PAGE_SIZE } from "../../utils/constant";
 import { formatDate } from "../../utils/dateUtils";
 import memoryUtils from "../../utils/memoryUtils";
+import storageUtils from "../../utils/storageUtils";
 
 import AddRoleModal from "./add-role-modal";
 import UpdateRoleModal from "./update-role-modal";
@@ -74,8 +75,16 @@ export default class Role extends Component {
     if (result.status === 0) {
       const newData = result.data;
       role.auth_time = newData.auth_time;
-      message.success("设置角色权限成功");
-      this.setState({ isShowUpdate: false, roles: [...this.state.roles] });
+
+      if (role._id === memoryUtils.user.role_id) {
+        memoryUtils.user = {};
+        storageUtils.removeUser();
+        this.props.history.replace("/login");
+        message.success("当前角色权限更新了，请重新登录");
+      } else {
+        message.success("设置角色权限成功");
+        this.setState({ isShowUpdate: false, roles: [...this.state.roles] });
+      }
     }
   };
 
@@ -110,7 +119,11 @@ export default class Role extends Component {
           columns={this.columns}
           dataSource={roles}
           pagination={{ defaultPageSize: PAGE_SIZE }}
-          rowSelection={{ type: "radio", selectedRowKeys: [role._id] }}
+          rowSelection={{
+            type: "radio",
+            selectedRowKeys: [role._id],
+            onSelect: (role) => this.setState({ role }),
+          }}
           onRow={this.onRow}
         ></Table>
         <AddRoleModal

@@ -104,7 +104,14 @@ export default class ProductHome extends Component {
   }
 
   render() {
-    const { products, loading, total, searchName, searchType } = this.state;
+    const {
+      products,
+      loading,
+      total,
+      searchName,
+      searchType,
+      pageNum,
+    } = this.state;
 
     const title = (
       <span>
@@ -147,6 +154,7 @@ export default class ProductHome extends Component {
             defaultPageSize: PAGE_SIZE,
             total,
             onChange: this.getProducts,
+            current: pageNum,
           }}
         />
       </Card>

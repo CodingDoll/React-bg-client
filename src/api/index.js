@@ -8,9 +8,6 @@ import ajax from "./ajax";
 export const reqLogin = (username, password) =>
   ajax({ method: "post", url: "/login", data: { username, password } });
 
-export const reqAddUser = (user) =>
-  ajax({ method: "post", url: "/manage/user/add", user });
-
 export const reqCategories = (parentId) =>
   ajax({
     method: "get",
@@ -101,6 +98,20 @@ export const reqUpdateRole = (role) =>
     url: "/manage/role/update",
     data: role,
   });
+
+export const reqUsers = () =>
+  ajax({
+    url: "/manage/user/list",
+  });
+
+export const reqDeleteUser = (userId) =>
+  ajax({ method: "post", url: "/manage/user/delete", data: { userId } });
+
+export const reqAddUser = (values) =>
+  ajax({ method: "post", url: "/manage/user/add", data: values });
+
+export const reqUpdateUser = (values) =>
+  ajax({ method: "post", url: "/manage/user/update", data: values });
 
 export const reqWeather = () => {
   return new Promise((resolve, reject) => {

@@ -5,6 +5,7 @@ import "./index.less";
 import { Menu } from "antd";
 import { menuList } from "../../config/menuConfig";
 import { withRouter } from "react-router-dom";
+import memoryUtils from "../../utils/memoryUtils";
 
 const { SubMenu } = Menu;
 
@@ -27,28 +28,43 @@ class LeftNav extends Component {
   //   });
   // };
 
+  hasAuth = (item) => {
+    const { key, isPublic } = item;
+    const menus = memoryUtils.user.role.menus;
+    const username = memoryUtils.user.username;
+
+    if (username === "admin" || isPublic || menus.indexOf(key) !== -1)
+      return true;
+    if (item.children)
+      return !!item.children.find((child) => menus.indexOf(child.key) !== -1);
+    return false;
+  };
+
   getMenuNodes = (menuList) => {
     const path = this.props.history.location.pathname;
+
     return menuList.reduce((pre, item) => {
-      if (!item.children) {
-        pre.push(
-          <Menu.Item key={item.key} icon={item.icon}>
-            <Link to={item.key}>{item.title}</Link>
-          </Menu.Item>
-        );
-      } else {
-        //查找一个与当前请求路径匹配的子item
-        const cItem = item.children.find(
-          (cItem) => path.indexOf(cItem.key) === 0
-        );
-        if (cItem) {
-          this.openKey = item.key;
+      if (this.hasAuth(item)) {
+        if (!item.children) {
+          pre.push(
+            <Menu.Item key={item.key} icon={item.icon}>
+              <Link to={item.key}>{item.title}</Link>
+            </Menu.Item>
+          );
+        } else {
+          //查找一个与当前请求路径匹配的子item
+          const cItem = item.children.find(
+            (cItem) => path.indexOf(cItem.key) === 0
+          );
+          if (cItem) {
+            this.openKey = item.key;
+          }
+          pre.push(
+            <SubMenu key={item.key} icon={item.icon} title={item.title}>
+              {this.getMenuNodes(item.children)}
+            </SubMenu>
+          );
         }
-        pre.push(
-          <SubMenu key={item.key} icon={item.icon} title={item.title}>
-            {this.getMenuNodes(item.children)}
-          </SubMenu>
-        );
       }
       return pre;
     }, []);
