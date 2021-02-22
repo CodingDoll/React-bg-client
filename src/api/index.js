@@ -82,6 +82,26 @@ export const reqUpdateProduct = (values) =>
     data: values,
   });
 
+export const reqRoles = () =>
+  ajax({
+    method: "get",
+    url: "/manage/role/list",
+  });
+
+export const reqAddRole = (roleName) =>
+  ajax({
+    method: "post",
+    url: "/manage/role/add",
+    data: { roleName },
+  });
+
+export const reqUpdateRole = (role) =>
+  ajax({
+    method: "post",
+    url: "/manage/role/update",
+    data: role,
+  });
+
 export const reqWeather = () => {
   return new Promise((resolve, reject) => {
     const url = `https://restapi.amap.com/v3/weather/weatherInfo?key=59edcc69f80df45c19cc3991296a9a47&city=440112`;
