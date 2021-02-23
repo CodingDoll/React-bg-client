@@ -1,32 +1,33 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import "./index.less";
 import logo from "../../assets/logo.png";
 import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { reqLogin } from "../../api";
-import memoryUtils from "../../utils/memoryUtils";
-import storageUtils from "../../utils/storageUtils";
 import { Redirect } from "react-router-dom";
+import { login } from "../../redux/actions";
 
 /**
  * 登录页的路由组件
  */
 
-export default class Login extends Component {
-  formRef = React.createRef();
+class Login extends Component {
+  // onFinish = async ({ username, password }) => {
+  //   // const { username, password } = values;
+  //   const response = await reqLogin(username, password); //{status: 0, data: user} {status: 1, msg:'xxx'}
+  //   if (response.status === 0) {
+  //     const user = response.data;
+  //     memoryUtils.user = user;
+  //     storageUtils.saveUser(user);
+  //     message.success("登录成功");
+  //     this.props.history.replace("/home");
+  //   } else {
+  //     message.error(response.msg);
+  //   }
+  // };
 
-  onFinish = async ({ username, password }) => {
-    // const { username, password } = values;
-    const response = await reqLogin(username, password); //{status: 0, data: user} {status: 1, msg:'xxx'}
-    if (response.status === 0) {
-      const user = response.data;
-      memoryUtils.user = user;
-      storageUtils.saveUser(user);
-      message.success("登录成功");
-      this.props.history.replace("/");
-    } else {
-      message.error(response.msg);
-    }
+  onFinish = ({ username, password }) => {
+    this.props.login(username, password);
   };
 
   validatePwd = (_, value) => {
@@ -44,7 +45,10 @@ export default class Login extends Component {
   };
 
   render() {
-    const user = memoryUtils.user;
+    const user = this.props.user;
+
+    const errorMsg = this.props.user.errorMsg;
+    if (errorMsg) message.error(errorMsg);
 
     if (user && user._id) {
       return <Redirect to="/" />;
@@ -61,7 +65,6 @@ export default class Login extends Component {
             name="normal_login"
             className="login-form"
             onFinish={this.onFinish}
-            ref={this.formRef}
           >
             <Form.Item
               name="username"
@@ -108,3 +111,5 @@ export default class Login extends Component {
     );
   }
 }
+
+export default connect((state) => ({ user: state.user }), { login })(Login);

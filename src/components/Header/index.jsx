@@ -1,13 +1,15 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
-import { reqWeather } from "../../api";
-import { menuList } from "../../config/menuConfig";
-import { formatDate } from "../../utils/dateUtils";
-import memoryUtils from "../../utils/memoryUtils";
-import "./index.less";
+import { connect } from "react-redux";
+
 import { Modal, Button } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import storageUtils from "../../utils/storageUtils";
+
+import { menuList } from "../../config/menuConfig";
+import { formatDate } from "../../utils/dateUtils";
+import { reqWeather } from "../../api";
+import "./index.less";
+import { logout } from "../../redux/actions";
 
 const { confirm } = Modal;
 
@@ -54,9 +56,7 @@ class Header extends Component {
       icon: <ExclamationCircleOutlined />,
       content: "将回到登录页面",
       onOk: () => {
-        storageUtils.removeUser();
-        memoryUtils.user = {};
-        this.props.history.replace("/login");
+        this.props.logout();
       },
     });
   };
@@ -72,8 +72,9 @@ class Header extends Component {
 
   render() {
     const { currentTime, weather } = this.state;
-    const username = memoryUtils.user.username;
-    const title = this.getTitle();
+    const { username } = this.props.user;
+    // const title = this.getTitle();
+    const { headTitle } = this.props;
     return (
       <div className="header">
         <div className="header-top">
@@ -83,7 +84,7 @@ class Header extends Component {
           </Button>
         </div>
         <div className="header-bottom">
-          <div className="header-bottom-left">{title}</div>
+          <div className="header-bottom-left">{headTitle}</div>
           <div className="header-bottom-right">
             <span>
               {currentTime} {weather}
@@ -94,4 +95,7 @@ class Header extends Component {
     );
   }
 }
-export default withRouter(Header);
+export default connect(
+  (state) => ({ headTitle: state.headTitle, user: state.user }),
+  { logout }
+)(withRouter(Header));
