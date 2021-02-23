@@ -13,6 +13,7 @@ import User from "../User";
 import Bar from "../Charts/Bar";
 import Line from "../Charts/Line";
 import Pie from "../Charts/Pie";
+import NotFound from "../not-found";
 
 const { Sider, Content, Footer } = Layout;
 
@@ -48,6 +49,7 @@ class Admin extends Component {
             }}
           >
             <Switch>
+              <Redirect exact from="/" to="/home" />
               <Route path="/home" component={Home} />
               <Route path="/product" component={Product} />
               <Route path="/category" component={Category} />
@@ -56,7 +58,7 @@ class Admin extends Component {
               <Route path="/charts/bar" component={Bar} />
               <Route path="/charts/line" component={Line} />
               <Route path="/charts/pie" component={Pie} />
-              <Redirect to="/home" />
+              <Route component={NotFound}></Route>
             </Switch>
           </Content>
           <Footer style={{ textAlign: "center", color: "#aaa" }}>
