@@ -1,70 +1,74 @@
-# Getting Started with Create React App
+# 一个按照教程敲出来的后台
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 所涉及的技术工具
 
-## Available Scripts
+- React
+- React Router
+- axios
+- less
+- Antd
+- Redux
+- nginx(简单了解)
+- echarts(简单了解)
+- postman
 
-In the project directory, you can run:
+## 功能涉及到
 
-### `npm start`
+- 登录
+- 分类管理（增删查改）
+- 商品管理（增删查改）
+- 角色管理（用户权限功能但仅仅体现在可查看菜单项）
+- 用户管理（增删改）
+- 图形图表（仅仅了解到 echart 的初步使用）
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## 遇到过的问题
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### antd modal form
 
-### `npm test`
+#### 描述
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+ant design 在 Modal 中使用 Form 表单，并且通过`Form.useForm()`， 获取 form 对象将其挂载到指定的 Form 表单后仍会出现'Instance created by `useForm` is not connect to any Form element. Forget to pass `form` prop'警告
 
-### `npm run build`
+#### 原因
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+这是由于 ant design 的 Modal 组件会在 Form 表单之前创建，因此当页面初始化时 form 对象会找不到可关联的 Form 表单，于是出现上述警告。
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### 解决
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+给 Modal 加上`forceRender`属性。
 
-### `npm run eject`
+### BrowserRouter
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+#### 描述
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+刷新路由路径时，会出现 404 错误，页面显示‘Cannot Get ···’
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+#### 原因
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+项目根路径后的 path 路径会被当成后台路由路径，去请求对应的后台路径，但后台中没有。
+HashRouter 不会触发这个问题的原因是路径中含有/#/home，/#使得请求后台时都是返回根路径。
 
-## Learn More
+#### 解决
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+在后台加上中间件
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+// 必须在路由器中间之后声明使用
+app.use((req, res) => {
+  fs.readFile(__dirname + "/public/index.html", (err, data) => {
+    if (err) {
+      console.log(err);
+      res.send("后台错误");
+    } else {
+      res.writeHead(200, {
+        "Content-Type": "text/html; charset=utf-8",
+      });
+      res.end(data);
+    }
+  });
+});
+```
 
-### Code Splitting
+#### 注意
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+后台路由路径和前端路由路径不可以相同。
